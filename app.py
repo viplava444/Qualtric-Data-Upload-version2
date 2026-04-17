@@ -1,7 +1,7 @@
 import streamlit as st
 from config import DATA_CENTERS, APP_TITLE, APP_ICON
 from utils import load_persisted_config, save_persisted_config
-from tabs import tab_embedded, tab_placeholder
+from tabs import tab_embedded, tab_bulk_update, tab_placeholder
 
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -142,6 +142,7 @@ st.markdown("---")
 
 TAB_DEFINITIONS = [
     ("📝 Update Responses",   tab_embedded),
+    ("📦 Bulk Update", tab_bulk_update),
     ("🔍 Retrieve Response",  tab_placeholder),
     ("🗑️ Delete Response",    tab_placeholder),
     ("➕ Tab 4",              tab_placeholder),
