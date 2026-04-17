@@ -20,14 +20,13 @@ JOB_STATUSES = {
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
-def build_bulk_payload(df: pd.DataFrame, selected_cols: list, reset_date: bool, remove_edits: bool, ignore_missing: bool) -> dict:
+def build_bulk_payload(df: pd.DataFrame, selected_cols: list, reset_date: bool, ignore_missing: bool) -> dict:
     """Build the full POST body for the bulk update job."""
     updates = []
     for _, row in df.iterrows():
         updates.append({
             "responseId":        str(row["responseId"]).strip(),
             "resetRecordedDate": reset_date,
-            "removeEdits":       remove_edits,
             "embeddedData":      build_embedded_data_payload(row, selected_cols),
         })
     return {
@@ -63,7 +62,6 @@ def render():
         - **Body size:** < 5MB inline · < 750MB via `fileUrl`
         - **Job SLO:** up to 1 hour · up to 6 hours total (including queue)
         - **Queuing:** Only one job per survey runs at a time — others are queued
-        - **Edits:** Fields edited in Data & Analysis will override API values unless `Remove Edits` is enabled
         - **Survey Flow:** Fields must exist in Survey Flow to be visible after update
         """)
 
@@ -90,7 +88,7 @@ def render():
     )
     st.divider()
 
-    df           = None
+    df            = None
     selected_cols = []
     file_url      = None
 
@@ -164,14 +162,11 @@ def render():
 
         # ── Options ───────────────────────────────────────────────────────────
         st.markdown("#### Step 4 — Configure Options")
-        c1, c2, c3 = st.columns(3)
+        c1, c2 = st.columns(2)
         with c1:
             reset_date = st.toggle("🔄 Reset Recorded Date", value=True,
                 help="Sets recorded date to current time.")
         with c2:
-            remove_edits = st.toggle("🧹 Remove Edits", value=False,
-                help="Remove Data & Analysis edits on updated fields so API values become visible.")
-        with c3:
             ignore_missing = st.toggle("⚠️ Ignore Missing Responses", value=False,
                 help="Skip responseIds that don't exist instead of marking them as warnings.")
         st.divider()
@@ -185,7 +180,7 @@ def render():
 
         with st.expander("🔍 Preview full JSON payload"):
             sample = build_bulk_payload(
-                df.head(3), selected_cols, reset_date, remove_edits, ignore_missing
+                df.head(3), selected_cols, reset_date, ignore_missing
             )
             st.json(sample)
             st.caption(f"Full job will contain **{len(df)}** update entries.")
@@ -197,7 +192,7 @@ def render():
         st.info(f"Ready to submit **{len(df)} response(s)** with **{len(selected_cols)} field(s)** as a single batch job.")
 
         if st.button("🚀 Start Bulk Update Job", type="primary", use_container_width=True, key="bulk_submit_inline"):
-            payload  = build_bulk_payload(df, selected_cols, reset_date, remove_edits, ignore_missing)
+            payload  = build_bulk_payload(df, selected_cols, reset_date, ignore_missing)
             endpoint = f"{base_url}/surveys/{survey_id}/update-responses"
 
             with st.spinner("Submitting job to Qualtrics..."):
