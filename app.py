@@ -141,11 +141,10 @@ st.caption(f"Connected to: `https://{data_center}.qualtrics.com`")
 st.markdown("---")
 
 TAB_DEFINITIONS = [
-    ("📝 Update Responses",   tab_embedded),
-    ("📦 Bulk Update", tab_bulk_update),
+    ("📝 Update Response",    tab_embedded),
+    ("📦 Bulk Update",        tab_bulk_update),
     ("🔍 Retrieve Response",  tab_placeholder),
     ("🗑️ Delete Response",    tab_placeholder),
-    ("➕ Tab 4",              tab_placeholder),
     ("➕ Tab 5",              tab_placeholder),
     ("➕ Tab 6",              tab_placeholder),
 ]
